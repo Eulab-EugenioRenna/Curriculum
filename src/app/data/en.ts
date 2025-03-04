@@ -2,7 +2,7 @@ export class En {
   public static esperienze = [
     {
       role: 'IT CONSULTANT',
-      date_start: 'DIC 2621',
+      date_start: 'DIC 2021',
       date_finish: 'PRESENT',
       info: 'EULAB. FULL REMOTE.',
       description: [
@@ -24,6 +24,26 @@ export class En {
             'Experience with CMS like WordPress for content management and updates.',
             'Created and maintained responsive websites using HTML, CSS, JavaScript, and frameworks.',
             'Optimized performance and SEO to improve online visibility.',
+          ],
+        },
+      ],
+    },
+    {
+      role: 'SOFTWARE ENGINEER',
+      date_start: 'OCT 2024',
+      date_finish: 'PRESENT',
+      info: 'COSIAM SRL. ',
+      description: [
+        {
+          descr_title: 'Web Application Development',
+          descr_list: [
+            'Development of modern web applications and Progressive Web Apps (PWA) using Angular to ensure native user experiences across all platforms.',
+            'Implementation of responsive and appealing user interfaces with TailwindCSS and advanced components from PrimeNG and Syncfusion libraries.',
+            'Configuration and optimization of databases and backend with PocketBase to manage data and user authentication.',
+            'Design of scalable and modular architectures to ensure maintainability and extensibility of applications.',
+            'Implementation of caching strategies and Service Workers to ensure offline functionality and improve performance.',
+            'Integration of RESTful APIs for communication between frontend and backend.',
+            'Development of interactive dashboards and complex data visualizations using advanced Syncfusion components.',
           ],
         },
       ],

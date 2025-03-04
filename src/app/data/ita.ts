@@ -2,7 +2,7 @@ export class Ita {
   public static esperienze = [
     {
       role: 'IT CONSULTANT',
-      date_start: 'DIC 2621',
+      date_start: 'DIC 2021',
       date_finish: 'ATTUALE',
       info: 'EULAB. FULL REMOTE.',
       description: [
@@ -26,6 +26,27 @@ export class Ita {
             'Ottimizzazione performance e SEO per migliorare visibilità online.',
           ],
         },
+      ],
+    },
+    {
+      role: 'SOFTWARE ENGINEER',
+      date_start: 'OTT 2024',
+      date_finish: 'ATTUALE',
+      info: 'COSIAM SRL. ',
+      description: [
+        {
+          descr_title: 'Web Application Development',
+          descr_list: [
+            'Sviluppo di applicazioni web moderne e Progressive Web Apps (PWA) utilizzando Angular per garantire esperienze utente native su tutte le piattaforme.',
+            'Implementazione di interfacce utente responsive e accattivanti con TailwindCSS e componenti avanzati delle librerie PrimeNG e Syncfusion.',
+            'Configurazione e ottimizzazione di database e backend con PocketBase per gestire dati e autenticazione degli utenti.',
+            "Progettazione di architetture scalabili e modulari per garantire la manutenibilità e l'estendibilità delle applicazioni.",
+            'Implementazione di strategie di caching e Service Workers per garantire funzionalità offline e migliorare le performance.',
+            'Integrazione di API RESTful per la comunicazione tra frontend e backend.',
+            'Sviluppo di dashboard interattive e visualizzazioni dati complesse utilizzando componenti avanzati di Syncfusion.',
+          ],
+        },
+
       ],
     },
     {

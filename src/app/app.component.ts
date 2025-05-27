@@ -1,14 +1,12 @@
 import { Component, signal } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
 import { Ita } from './data/ita';
 import { En } from './data/en';
-import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet],
+  imports: [],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
 })

@@ -103,7 +103,9 @@ export class AppComponent {
 
     pdf.setFontSize(14);
     pdf.setFont('helvetica', 'normal');
-    pdf.text(safeText(this.role().toUpperCase()), margin, 35);
+    const roleText = safeText(this.role().toUpperCase());
+    const roleLines = pdf.splitTextToSize(roleText, contentWidth);
+    pdf.text(roleLines, margin, 35);
 
     yPosition = 60;
 
@@ -122,12 +124,16 @@ export class AppComponent {
       const contattiObj = this.contatti();
       if (contattiObj) {
         if (contattiObj.email) {
-          pdf.text(`Email: ${safeText(contattiObj.email)}`, margin, yPosition);
-          yPosition += 5;
+          const emailText = `Email: ${safeText(contattiObj.email)}`;
+          const emailLines = pdf.splitTextToSize(emailText, contentWidth);
+          pdf.text(emailLines, margin, yPosition);
+          yPosition += emailLines.length * 5;
         }
         if (contattiObj.tel) {
-          pdf.text(`Tel: ${safeText(contattiObj.tel)}`, margin, yPosition);
-          yPosition += 5;
+          const telText = `Tel: ${safeText(contattiObj.tel)}`;
+          const telLines = pdf.splitTextToSize(telText, contentWidth);
+          pdf.text(telLines, margin, yPosition);
+          yPosition += telLines.length * 5;
         }
       }
       yPosition += 8;
@@ -141,7 +147,11 @@ export class AppComponent {
     pdf.setFontSize(14);
     pdf.setFont('helvetica', 'bold');
     pdf.setTextColor(primaryColor[0], primaryColor[1], primaryColor[2]);
-    pdf.text(safeText(this.descrizioneTitle().toUpperCase()), margin, yPosition);
+    pdf.text(
+      safeText(this.descrizioneTitle().toUpperCase()),
+      margin,
+      yPosition
+    );
     yPosition += 10;
 
     pdf.setTextColor(textColor[0], textColor[1], textColor[2]);
@@ -182,15 +192,34 @@ export class AppComponent {
         const competenzaText = safeText(competenza);
         if (competenzaText) {
           const xPos = margin + currentCol * colWidth;
-          pdf.setTextColor(primaryColor[0], primaryColor[1], primaryColor[2]);
-          pdf.text('•', xPos, yPosition);
-          pdf.setTextColor(textColor[0], textColor[1], textColor[2]);
-          pdf.text(competenzaText, xPos + 5, yPosition);
 
-          currentCol++;
-          if (currentCol >= cols) {
-            currentCol = 0;
-            yPosition += 6;
+          // Gestisci competenze lunghe
+          const competenzaLines = pdf.splitTextToSize(
+            competenzaText,
+            colWidth - 10
+          );
+          if (competenzaLines.length > 1) {
+            // Se troppo lunga per una colonna, mettila su tutta la riga
+            if (currentCol > 0) {
+              yPosition += 6;
+              currentCol = 0;
+            }
+            pdf.setTextColor(primaryColor[0], primaryColor[1], primaryColor[2]);
+            pdf.text('•', margin, yPosition);
+            pdf.setTextColor(textColor[0], textColor[1], textColor[2]);
+            pdf.text(competenzaLines, margin + 5, yPosition);
+            yPosition += competenzaLines.length * 5;
+          } else {
+            pdf.setTextColor(primaryColor[0], primaryColor[1], primaryColor[2]);
+            pdf.text('•', xPos, yPosition);
+            pdf.setTextColor(textColor[0], textColor[1], textColor[2]);
+            pdf.text(competenzaText, xPos + 5, yPosition);
+
+            currentCol++;
+            if (currentCol >= cols) {
+              currentCol = 0;
+              yPosition += 6;
+            }
           }
         }
       });
@@ -225,8 +254,12 @@ export class AppComponent {
         pdf.setFontSize(12);
         pdf.setFont('helvetica', 'bold');
         pdf.setTextColor(textColor[0], textColor[1], textColor[2]);
-        pdf.text(safeText(exp?.role), margin, yPosition);
-        yPosition += 7;
+        const roleLines = pdf.splitTextToSize(
+          safeText(exp?.role),
+          contentWidth
+        );
+        pdf.text(roleLines, margin, yPosition);
+        yPosition += roleLines.length * 6 + 1;
 
         // Info azienda e periodo
         pdf.setFontSize(10);
@@ -236,14 +269,18 @@ export class AppComponent {
         const periodo = `${safeText(exp?.date_start)} - ${safeText(
           exp?.date_finish
         )}`;
+
         if (info && periodo) {
-          pdf.text(info, margin, yPosition);
+          const infoLines = pdf.splitTextToSize(info, contentWidth * 0.7);
+          pdf.text(infoLines, margin, yPosition);
+
           pdf.setFont('helvetica', 'normal');
           pdf.setTextColor(100, 100, 100);
           const periodoWidth = pdf.getTextWidth(periodo);
           pdf.text(periodo, pageWidth - margin - periodoWidth, yPosition);
+          yPosition += Math.max(infoLines.length * 5, 5);
         }
-        yPosition += 7;
+        yPosition += 2;
 
         // Descrizioni dettagliate
         if (exp?.description && Array.isArray(exp.description)) {
@@ -257,12 +294,12 @@ export class AppComponent {
                 primaryColor[1],
                 primaryColor[2]
               );
-              pdf.text(
+              const titleLines = pdf.splitTextToSize(
                 safeText(descSection.descr_title),
-                margin + 5,
-                yPosition
+                contentWidth - 10
               );
-              yPosition += 6;
+              pdf.text(titleLines, margin + 5, yPosition);
+              yPosition += titleLines.length * 5 + 1;
             }
 
             // Lista delle attività
@@ -305,6 +342,7 @@ export class AppComponent {
         yPosition += 5; // Spazio finale tra esperienze
       });
     }
+
     // Formazione
     checkNewPage(30);
     pdf.setFillColor(lightGray[0], lightGray[1], lightGray[2]);
@@ -331,8 +369,12 @@ export class AppComponent {
         pdf.setFontSize(11);
         pdf.setFont('helvetica', 'bold');
         pdf.setTextColor(textColor[0], textColor[1], textColor[2]);
-        pdf.text(safeText(form?.role), margin, yPosition);
-        yPosition += 6;
+        const formRoleLines = pdf.splitTextToSize(
+          safeText(form?.role),
+          contentWidth
+        );
+        pdf.text(formRoleLines, margin, yPosition);
+        yPosition += formRoleLines.length * 5 + 1;
 
         // Info e periodo
         pdf.setFontSize(10);
@@ -342,14 +384,18 @@ export class AppComponent {
         const periodo = `${safeText(form?.date_start)} - ${safeText(
           form?.date_finish
         )}`;
+
         if (info && periodo) {
-          pdf.text(info, margin, yPosition);
+          const infoLines = pdf.splitTextToSize(info, contentWidth * 0.7);
+          pdf.text(infoLines, margin, yPosition);
+
           pdf.setFont('helvetica', 'normal');
           pdf.setTextColor(100, 100, 100);
           const periodoWidth = pdf.getTextWidth(periodo);
           pdf.text(periodo, pageWidth - margin - periodoWidth, yPosition);
+          yPosition += Math.max(infoLines.length * 5, 5);
         }
-        yPosition += 7;
+        yPosition += 2;
 
         // Descrizioni dettagliate (se presenti)
         if (form?.description && Array.isArray(form.description)) {
@@ -363,12 +409,12 @@ export class AppComponent {
                 primaryColor[1],
                 primaryColor[2]
               );
-              pdf.text(
+              const titleLines = pdf.splitTextToSize(
                 safeText(descSection.descr_title),
-                margin + 5,
-                yPosition
+                contentWidth - 10
               );
-              yPosition += 5;
+              pdf.text(titleLines, margin + 5, yPosition);
+              yPosition += titleLines.length * 4 + 1;
             }
 
             // Lista delle attività/competenze
@@ -438,8 +484,9 @@ export class AppComponent {
           pdf.setTextColor(primaryColor[0], primaryColor[1], primaryColor[2]);
           pdf.text('•', margin, yPosition);
           pdf.setTextColor(textColor[0], textColor[1], textColor[2]);
-          pdf.text(corsoText, margin + 5, yPosition);
-          yPosition += 5;
+          const corsoLines = pdf.splitTextToSize(corsoText, contentWidth - 10);
+          pdf.text(corsoLines, margin + 5, yPosition);
+          yPosition += corsoLines.length * 5;
         }
       });
       yPosition += 5;
@@ -470,8 +517,12 @@ export class AppComponent {
             pdf.setTextColor(primaryColor[0], primaryColor[1], primaryColor[2]);
             pdf.text('•', margin, yPosition);
             pdf.setTextColor(textColor[0], textColor[1], textColor[2]);
-            pdf.text(linguaText, margin + 5, yPosition);
-            yPosition += 5;
+            const linguaLines = pdf.splitTextToSize(
+              linguaText,
+              contentWidth - 10
+            );
+            pdf.text(linguaLines, margin + 5, yPosition);
+            yPosition += linguaLines.length * 5;
 
             // Se esiste una certificazione, aggiungila
             if (lingua.cert) {
@@ -479,8 +530,12 @@ export class AppComponent {
               if (certText) {
                 pdf.setFontSize(9);
                 pdf.setTextColor(100, 100, 100);
-                pdf.text(`Certificazione: ${certText}`, margin + 10, yPosition);
-                yPosition += 4;
+                const certLines = pdf.splitTextToSize(
+                  `Certificazione: ${certText}`,
+                  contentWidth - 15
+                );
+                pdf.text(certLines, margin + 10, yPosition);
+                yPosition += certLines.length * 4;
                 pdf.setFontSize(10); // Reset font size
                 pdf.setTextColor(textColor[0], textColor[1], textColor[2]); // Reset color
               }
@@ -495,8 +550,12 @@ export class AppComponent {
             pdf.setTextColor(primaryColor[0], primaryColor[1], primaryColor[2]);
             pdf.text('•', margin, yPosition);
             pdf.setTextColor(textColor[0], textColor[1], textColor[2]);
-            pdf.text(linguaText, margin + 5, yPosition);
-            yPosition += 5;
+            const linguaLines = pdf.splitTextToSize(
+              linguaText,
+              contentWidth - 10
+            );
+            pdf.text(linguaLines, margin + 5, yPosition);
+            yPosition += linguaLines.length * 5;
           }
         }
       });
@@ -521,6 +580,7 @@ export class AppComponent {
       : 'CV_Eugenio_Renna_IT.pdf';
     pdf.save(fileName);
   }
+
   translate(lang: any) {
     if (lang == 'En') {
       this.english = true;
